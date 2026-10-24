@@ -1,0 +1,32 @@
+# An example GitHub Actions job: open a maintenance window, deploy, and always close the window again.
+# Copy it into your own repository's .github/workflows/ and adapt the deploy step. Set INFRANEST_TOKEN as a
+# repository secret, and INFRANEST_ORG and CHECK_IDS as variables.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      INFRANEST_TOKEN: ${{ secrets.INFRANEST_TOKEN }}
+      INFRANEST_ORG: ${{ vars.INFRANEST_ORG }}
+      CHECK_IDS: ${{ vars.CHECK_IDS }}
+      DEPLOY_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Open a maintenance window
+        id: window
+        run: echo "id=$(./examples/maintenance-window/maintenance.sh open)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy
+        run: ./deploy.sh   # your deploy
+
+      - name: Close the maintenance window
+        if: always() && steps.window.outputs.id != ''
+        env:
+          WINDOW_ID: ${{ steps.window.outputs.id }}
+        run: ./examples/maintenance-window/maintenance.sh close

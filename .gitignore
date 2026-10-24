@@ -1,0 +1,4 @@
+# Output of the audit-log example, and anything with a token in it.
+audit-*.jsonl
+.env
+*.local
