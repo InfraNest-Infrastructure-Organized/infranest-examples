@@ -9,13 +9,13 @@
 
 <p align="center">
   <strong>Ready-to-run scripts for the InfraNest API.</strong><br>
-  Copy one, set three variables, run it. Try them in your sandbox first.
+  In shell, Python, JavaScript and PowerShell. Copy one, set three variables, run it. Try them in your sandbox first.
 </p>
 
 <p align="center">
   <a href="https://github.com/InfraNest-Infrastructure-Organized/infranest-examples/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/InfraNest-Infrastructure-Organized/infranest-examples/actions/workflows/ci.yml/badge.svg"></a>
   <img alt="Licence: Apache-2.0" src="https://img.shields.io/badge/licence-Apache--2.0-blue">
-  <img alt="Needs: sh, curl, jq" src="https://img.shields.io/badge/needs-sh%2C%20curl%2C%20jq-lightgrey">
+  <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-none-brightgreen">
 </p>
 
 ---
@@ -45,23 +45,26 @@ When that works, everything you need is set up.
 
 ## The examples
 
-| Example | What it does | Token needs |
-|---|---|---|
-| [`sandbox-smoke-test`](examples/sandbox-smoke-test/smoke-test.sh) | A first run: reset the sandbox, then create, preview, change and delete a record | a sandbox test token |
-| [`dynamic-dns`](examples/dynamic-dns/update-dns.sh) | Keep a record pointing at a machine whose public address changes | DNS → Write |
-| [`acme-dns-01`](examples/acme-dns-01/) | Let's Encrypt certificates through InfraNest DNS, wildcards included (certbot hooks) | DNS → Write |
-| [`maintenance-window`](examples/maintenance-window/) | Silence alerts during a deploy and close the window afterwards, even if it failed | Monitoring → Write |
-| [`monitor-per-deploy`](examples/monitor-per-deploy/) | Make sure every new service has a monitor; pause one around a deploy | Monitoring → Write |
-| [`watch-new-server`](examples/watch-new-server/watch-server.sh) | Turn on monitoring for a new server and check its website | Servers → Write, Monitoring → Write |
-| [`audit-log-to-siem`](examples/audit-log-to-siem/export-audit-log.sh) | Write a day of the audit log as JSON lines for your log platform | Audit log → Read |
+| Example | What it does | Token needs | In |
+|---|---|---|---|
+| [`sandbox-smoke-test`](examples/sandbox-smoke-test/) | A first run: reset the sandbox, then create, preview, change and delete a record | a sandbox test token | [sh](examples/sandbox-smoke-test/smoke-test.sh) · [Python](examples/sandbox-smoke-test/smoke_test.py) · [JS](examples/sandbox-smoke-test/smoke-test.mjs) |
+| [`dynamic-dns`](examples/dynamic-dns/) | Keep a record pointing at a machine whose public address changes | DNS → Write | [sh](examples/dynamic-dns/update-dns.sh) · [Python](examples/dynamic-dns/update_dns.py) · [JS](examples/dynamic-dns/update-dns.mjs) · [PowerShell](examples/dynamic-dns/Update-Dns.ps1) |
+| [`acme-dns-01`](examples/acme-dns-01/) | Let's Encrypt certificates through InfraNest DNS, wildcards included (certbot hooks) | DNS → Write | [sh](examples/acme-dns-01/) |
+| [`maintenance-window`](examples/maintenance-window/) | Silence alerts during a deploy and close the window afterwards, even if it failed | Monitoring → Write | [sh](examples/maintenance-window/maintenance.sh) · [Python](examples/maintenance-window/maintenance.py) · [JS](examples/maintenance-window/maintenance.mjs) · [PowerShell](examples/maintenance-window/Maintenance.ps1) · [GitHub Actions](examples/maintenance-window/github-actions-example.yml) |
+| [`monitor-per-deploy`](examples/monitor-per-deploy/) | Make sure every new service has a monitor; pause one around a deploy | Monitoring → Write | [sh](examples/monitor-per-deploy/) · [Python](examples/monitor-per-deploy/create_monitor.py) · [JS](examples/monitor-per-deploy/create-monitor.mjs) |
+| [`watch-new-server`](examples/watch-new-server/watch-server.sh) | Turn on monitoring for a new server and check its website | Servers → Write, Monitoring → Write | [sh](examples/watch-new-server/watch-server.sh) |
+| [`audit-log-to-siem`](examples/audit-log-to-siem/export-audit-log.sh) | Write a day of the audit log as JSON lines for your log platform | Audit log → Read | [sh](examples/audit-log-to-siem/export-audit-log.sh) |
 
-Every script starts with a comment that says what it does and which variables it reads. The DNS examples can
+Every version does the same thing, and every script starts with a comment that says what it does and which
+variables it reads. The DNS examples can
 show what they would change first (`DRY_RUN=1`), and every script that creates something sends an
 `Idempotency-Key`, so a retried run does not create it twice.
 
 ## What you need
 
-- A POSIX shell (`sh`, `bash`, `zsh`), [`curl`](https://curl.se) 7.76 or newer, and [`jq`](https://jqlang.github.io/jq/).
+- For the shell scripts: a POSIX shell (`sh`, `bash`, `zsh`), [`curl`](https://curl.se) 7.76 or newer, and
+  [`jq`](https://jqlang.github.io/jq/). For the others: Python 3.8+, Node.js 18+, or PowerShell 7 (5.1 works
+  too). None of them needs a package: each script is one file.
 - An InfraNest API token with only the scopes the example needs. Create one under **My account → Developer**.
 - Your organization's id: it is under **Settings → Organization** in the app.
 
@@ -92,8 +95,9 @@ windows.
 ## Kept in step with the API
 
 Every pull request and a weekly job check each API call in these scripts against InfraNest's published API
-description: the method, the path and every field a request sends. A renamed endpoint or field fails the check
-here, before it fails in your pipeline. [ShellCheck](https://www.shellcheck.net) checks the scripts too.
+description, in every language: the method, the path and every field a request sends. A renamed endpoint or field
+fails the check here, before it fails in your pipeline. [ShellCheck](https://www.shellcheck.net) checks the shell
+scripts, and the Python, JavaScript and PowerShell versions are checked to parse.
 
 ## Links
 

@@ -17,10 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: ShellCheck
         run: shellcheck -s sh examples/*/*.sh
+
+      - name: Python, Node and PowerShell examples parse
+        run: |
+          for f in examples/*/*.py; do python3 -m py_compile "$f"; done
+          for f in examples/*/*.mjs; do node --check "$f"; done
+          pwsh -NoProfile -Command '$bad = 0; Get-ChildItem examples -Recurse -Filter *.ps1 | ForEach-Object { $e = $null; [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$e); if ($e) { $bad++; Write-Error "$($_.Name): $($e[0].Message)" } }; exit $bad'
 
       - name: Every API call matches the API description
         run: python3 scripts/check-requests.py
