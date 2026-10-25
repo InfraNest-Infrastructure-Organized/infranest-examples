@@ -5,6 +5,7 @@ INFRANEST_TOKEN  a token with DNS → Write
 INFRANEST_ORG    your organization's id
 ZONE_ID, RECORD_ID  the zone and the record to keep up to date
 FAMILY           4 (default) or 6
+ADDRESS          optional: use this address instead of looking it up (from your router, or for a test)
 DRY_RUN          1 to only show what would change
 """
 import json
@@ -41,8 +42,10 @@ def env(name):
 
 org, zone, record = env("INFRANEST_ORG"), env("ZONE_ID"), env("RECORD_ID")
 lookup = "https://api64.ipify.org" if os.environ.get("FAMILY") == "6" else "https://api.ipify.org"
-with urllib.request.urlopen(lookup, timeout=15) as answer:
-    current = answer.read().decode().strip()
+current = os.environ.get("ADDRESS")
+if not current:
+    with urllib.request.urlopen(lookup, timeout=15) as answer:
+        current = answer.read().decode().strip()
 
 stored = infranest("GET", f"/organizations/{org}/dns-zones/{zone}/dns-records/{record}")["value"]
 if current == stored:

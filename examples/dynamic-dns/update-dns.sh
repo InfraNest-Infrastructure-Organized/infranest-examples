@@ -7,6 +7,7 @@
 #   ZONE_ID           the zone's id      (GET /organizations/{org}/dns-zones)
 #   RECORD_ID         the record's id    (GET /organizations/{org}/dns-zones/{zone}/dns-records?type=A)
 #   FAMILY            4 (default) or 6
+#   ADDRESS           optional: use this address instead of looking it up (from your router, or for a test)
 #   DRY_RUN           1 to only show what would change
 set -eu
 
@@ -30,7 +31,7 @@ infranest() {
 RECORD="/organizations/$INFRANEST_ORG/dns-zones/$ZONE_ID/dns-records/$RECORD_ID"
 
 if [ "${FAMILY:-4}" = "6" ]; then lookup=https://api64.ipify.org; else lookup=https://api.ipify.org; fi
-current=$(curl -fsS "$lookup")
+current=${ADDRESS:-$(curl -fsS "$lookup")}
 stored=$(infranest GET "$RECORD" | jq -r .value)
 
 if [ "$current" = "$stored" ]; then

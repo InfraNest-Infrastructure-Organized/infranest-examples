@@ -1,0 +1,16 @@
+#cloud-config
+# Installs the InfraNest agent on a new Linux server's first boot. Paste it into your cloud provider's
+# "user data" field, or pass it to the API or Terraform that creates the server.
+#
+# Replace sat_YOUR_TOKEN with the server's own token, from its page in InfraNest (Metrics → Install agent).
+# The token goes in a file only root can read, and the file is removed once the agent is installed.
+write_files:
+  - path: /root/infranest-agent-token
+    permissions: "0600"
+    owner: root:root
+    content: sat_YOUR_TOKEN
+
+runcmd:
+  - curl -fsSL https://get.infranest.io/agent.sh -o /root/infranest-agent-install.sh
+  - sh /root/infranest-agent-install.sh --token-file /root/infranest-agent-token
+  - rm -f /root/infranest-agent-token /root/infranest-agent-install.sh

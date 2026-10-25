@@ -1,0 +1,11 @@
+---
+# The server token for this host, from the server's page in InfraNest (Metrics → Install agent).
+# Each server has its own token: set it per host, in host_vars, and keep it in Ansible Vault.
+infranest_agent_token: ""
+
+# Also report the busiest processes by name (program names only, never their arguments). Off unless you ask.
+infranest_agent_processes: false
+
+# Where the installers come from. They download a versioned release and verify its checksum.
+infranest_agent_installer_sh: https://get.infranest.io/agent.sh
+infranest_agent_installer_ps1: https://get.infranest.io/agent.ps1

@@ -45,15 +45,17 @@ When that works, everything you need is set up.
 
 ## The examples
 
-| Example | What it does | Token needs | In |
-|---|---|---|---|
-| [`sandbox-smoke-test`](examples/sandbox-smoke-test/) | A first run: reset the sandbox, then create, preview, change and delete a record | a sandbox test token | [sh](examples/sandbox-smoke-test/smoke-test.sh) · [Python](examples/sandbox-smoke-test/smoke_test.py) · [JS](examples/sandbox-smoke-test/smoke-test.mjs) |
-| [`dynamic-dns`](examples/dynamic-dns/) | Keep a record pointing at a machine whose public address changes | DNS → Write | [sh](examples/dynamic-dns/update-dns.sh) · [Python](examples/dynamic-dns/update_dns.py) · [JS](examples/dynamic-dns/update-dns.mjs) · [PowerShell](examples/dynamic-dns/Update-Dns.ps1) |
-| [`acme-dns-01`](examples/acme-dns-01/) | Let's Encrypt certificates through InfraNest DNS, wildcards included (certbot hooks) | DNS → Write | [sh](examples/acme-dns-01/) |
-| [`maintenance-window`](examples/maintenance-window/) | Silence alerts during a deploy and close the window afterwards, even if it failed | Monitoring → Write | [sh](examples/maintenance-window/maintenance.sh) · [Python](examples/maintenance-window/maintenance.py) · [JS](examples/maintenance-window/maintenance.mjs) · [PowerShell](examples/maintenance-window/Maintenance.ps1) · [GitHub Actions](examples/maintenance-window/github-actions-example.yml) |
-| [`monitor-per-deploy`](examples/monitor-per-deploy/) | Make sure every new service has a monitor; pause one around a deploy | Monitoring → Write | [sh](examples/monitor-per-deploy/) · [Python](examples/monitor-per-deploy/create_monitor.py) · [JS](examples/monitor-per-deploy/create-monitor.mjs) |
-| [`watch-new-server`](examples/watch-new-server/watch-server.sh) | Turn on monitoring for a new server and check its website | Servers → Write, Monitoring → Write | [sh](examples/watch-new-server/watch-server.sh) |
-| [`audit-log-to-siem`](examples/audit-log-to-siem/export-audit-log.sh) | Write a day of the audit log as JSON lines for your log platform | Audit log → Read | [sh](examples/audit-log-to-siem/export-audit-log.sh) |
+| Example | What it does | Token needs | In | Docs |
+|---|---|---|---|---|
+| [`sandbox-smoke-test`](examples/sandbox-smoke-test/) | A first run: reset the sandbox, then create, preview, change and delete a record | a sandbox test token | [sh](examples/sandbox-smoke-test/smoke-test.sh) · [Python](examples/sandbox-smoke-test/smoke_test.py) · [JS](examples/sandbox-smoke-test/smoke-test.mjs) | [Sandbox](https://developers.infranest.io/sandbox) |
+| [`dynamic-dns`](examples/dynamic-dns/) | Keep a record pointing at a machine whose public address changes | DNS → Write | [sh](examples/dynamic-dns/update-dns.sh) · [Python](examples/dynamic-dns/update_dns.py) · [JS](examples/dynamic-dns/update-dns.mjs) · [PowerShell](examples/dynamic-dns/Update-Dns.ps1) | [Dynamic DNS from a script](https://developers.infranest.io/recipes/dynamic-dns-from-a-script) |
+| [`acme-dns-01`](examples/acme-dns-01/) | Let's Encrypt certificates through InfraNest DNS, wildcards included (certbot hooks) | DNS → Write | [sh](examples/acme-dns-01/) | [Let's Encrypt with InfraNest DNS](https://developers.infranest.io/recipes/acme-dns-01) |
+| [`maintenance-window`](examples/maintenance-window/) | Silence alerts during a deploy and close the window afterwards, even if it failed | Monitoring → Write | [sh](examples/maintenance-window/maintenance.sh) · [Python](examples/maintenance-window/maintenance.py) · [JS](examples/maintenance-window/maintenance.mjs) · [PowerShell](examples/maintenance-window/Maintenance.ps1) · [GitHub Actions](examples/maintenance-window/github-actions-example.yml) | [Maintenance window from a pipeline](https://developers.infranest.io/recipes/maintenance-window-from-a-pipeline) |
+| [`monitor-per-deploy`](examples/monitor-per-deploy/) | Make sure every new service has a monitor; pause one around a deploy | Monitoring → Write | [sh](examples/monitor-per-deploy/) · [Python](examples/monitor-per-deploy/create_monitor.py) · [JS](examples/monitor-per-deploy/create-monitor.mjs) | [Monitor after a deploy](https://developers.infranest.io/recipes/monitor-after-a-deploy) |
+| [`watch-new-server`](examples/watch-new-server/) | Turn on monitoring for a new server and check its website | Servers → Write, Monitoring → Write | [sh](examples/watch-new-server/watch-server.sh) | [Watch a new server](https://developers.infranest.io/recipes/watch-a-new-server) |
+| [`status-and-uptime`](examples/status-and-uptime/) | Is everything up right now, a monitor's uptime for a period or a month, and hour-by-hour results | Monitoring → Read (Servers → Read for servers) | [sh](examples/status-and-uptime/) | [Status, uptime and history](https://developers.infranest.io/recipes/status-and-uptime) |
+| [`audit-log-to-siem`](examples/audit-log-to-siem/) | Write a day of the audit log as JSON lines for your log platform | Audit log → Read | [sh](examples/audit-log-to-siem/export-audit-log.sh) | [Audit log to a SIEM](https://developers.infranest.io/recipes/audit-log-to-a-siem) |
+| [`agent-install`](examples/agent-install/) | Install the server agent on many Linux and Windows servers: an Ansible role and a cloud-init file | a server token per server (no API token) | [Ansible](examples/agent-install/roles/infranest_agent/) · [cloud-init](examples/agent-install/cloud-init.yaml) | [Install the agent on many servers](https://developers.infranest.io/agent/install-on-many-servers) |
 
 Every version does the same thing, and every script starts with a comment that says what it does and which
 variables it reads. The DNS examples can
@@ -94,10 +96,18 @@ windows.
 
 ## Kept in step with the API
 
-Every pull request and a weekly job check each API call in these scripts against InfraNest's published API
-description, in every language: the method, the path and every field a request sends. A renamed endpoint or field
-fails the check here, before it fails in your pipeline. [ShellCheck](https://www.shellcheck.net) checks the shell
-scripts, and the Python, JavaScript and PowerShell versions are checked to parse.
+Every pull request, every change to `main` and a weekly job check these scripts in two ways:
+
+- **Against the API description.** Each API call, in every language, is checked against InfraNest's published API
+  description: the method, the path and every field a request sends. A renamed endpoint or field fails the check
+  here, before it fails in your pipeline. [ShellCheck](https://www.shellcheck.net) checks the shell scripts, and the
+  Python, JavaScript and PowerShell versions are checked to parse.
+- **Against a real sandbox.** Every example, in every language, is run against an InfraNest sandbox the way you
+  would run it, and checked to do what it says; what it creates is removed again and the sandbox is reset at the
+  end. [`scripts/sandbox-run.sh`](scripts/sandbox-run.sh) does it, and you can run it yourself with a test token
+  from your own sandbox: `INFRANEST_TOKEN='123|in_test_…' scripts/sandbox-run.sh`. It refuses any token that is not
+  a test token. The agent example installs software on servers, so it is linted and run in Ansible's check mode
+  instead.
 
 ## Links
 

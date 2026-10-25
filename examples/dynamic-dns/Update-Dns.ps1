@@ -5,6 +5,7 @@
 #   INFRANEST_ORG    your organization's id
 #   ZONE_ID, RECORD_ID  the zone and the record to keep up to date
 #   FAMILY           4 (default) or 6
+#   ADDRESS          optional: use this address instead of looking it up (from your router, or for a test)
 #   DRY_RUN          1 to only show what would change
 $ErrorActionPreference = 'Stop'
 
@@ -30,7 +31,7 @@ function Get-Required([string]$Name) {
 
 $org = Get-Required 'INFRANEST_ORG'; $zone = Get-Required 'ZONE_ID'; $record = Get-Required 'RECORD_ID'
 $lookup = if ($env:FAMILY -eq '6') { 'https://api64.ipify.org' } else { 'https://api.ipify.org' }
-$current = (Invoke-RestMethod -Uri $lookup).Trim()
+$current = if ($env:ADDRESS) { $env:ADDRESS } else { (Invoke-RestMethod -Uri $lookup).Trim() }
 
 $stored = (Invoke-InfraNest -Method GET -Path "/organizations/$org/dns-zones/$zone/dns-records/$record").value
 if ($current -eq $stored) { exit 0 }

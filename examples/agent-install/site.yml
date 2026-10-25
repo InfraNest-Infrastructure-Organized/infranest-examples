@@ -1,0 +1,10 @@
+---
+# Install the InfraNest agent on every host in the inventory.
+#
+#   ansible-playbook -i inventory.yml site.yml --ask-vault-pass
+#
+# Try it first with --check: it then shows what it would do and installs nothing.
+- name: Install the InfraNest agent
+  hosts: all
+  roles:
+    - infranest_agent

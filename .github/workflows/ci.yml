@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: ShellCheck
-        run: shellcheck -s sh examples/*/*.sh
+        run: shellcheck -s sh examples/*/*.sh scripts/*.sh
 
       - name: Python, Node and PowerShell examples parse
         run: |
@@ -30,3 +30,102 @@ jobs:
 
       - name: Every API call matches the API description
         run: python3 scripts/check-requests.py
+
+  # Runs every example against a real InfraNest sandbox, as a user would run it, and checks it did what it says.
+  # It needs a test token from a sandbox in the INFRANEST_TEST_TOKEN secret. Without one (a fork, or before the
+  # secret is added) the job says so and passes: the static checks above still run everywhere.
+  sandbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # One run at a time: every run resets the same sandbox.
+    concurrency:
+      group: sandbox
+      cancel-in-progress: false
+    env:
+      INFRANEST_TOKEN: ${{ secrets.INFRANEST_TEST_TOKEN }}
+      INFRANEST_API_URL: ${{ vars.INFRANEST_API_URL || secrets.INFRANEST_API_URL || 'https://api.infranest.io' }}
+      # A whole run makes about 60 changes; a pause before each example keeps it inside 60 a minute.
+      PAUSE_SECONDS: 15
+    steps:
+      - name: Look for the sandbox token
+        id: token
+        run: |
+          if [ -z "$INFRANEST_TOKEN" ]; then
+            echo "::notice title=Sandbox run skipped::The INFRANEST_TEST_TOKEN secret is not set (or this run cannot read it, as on a pull request from a fork), so the examples were not run against the sandbox. The static checks still ran."
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "INFRANEST_API=${INFRANEST_API_URL%/}/api" >> "$GITHUB_ENV"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: steps.token.outputs.present == 'true'
+
+      - name: Find the sandbox and reset it
+        if: steps.token.outputs.present == 'true'
+        run: |
+          org=$(scripts/sandbox-run.sh find)
+          echo "Sandbox: $org"
+          echo "INFRANEST_ORG=$org" >> "$GITHUB_ENV"
+          scripts/sandbox-run.sh reset
+
+      # One step per example, so a failure names its example. Each one removes what it created.
+      - name: sandbox-smoke-test
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh sandbox-smoke-test
+      - name: dynamic-dns
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh dynamic-dns
+      - name: acme-dns-01
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh acme-dns-01
+      - name: maintenance-window
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh maintenance-window
+      - name: monitor-per-deploy
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh monitor-per-deploy
+      - name: watch-new-server
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh watch-new-server
+      - name: status-and-uptime
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh status-and-uptime
+      - name: audit-log-to-siem
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh audit-log-to-siem
+
+      - name: Reset the sandbox
+        if: ${{ always() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh reset
+
+  # The agent example installs software on servers, so CI never runs it for real: it lints the role, checks the
+  # playbook's syntax and runs it in check mode against the runner itself, which installs nothing.
+  agent-install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: examples/agent-install
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install Ansible and ansible-lint
+        run: |
+          python3 -m venv "$RUNNER_TEMP/ansible"
+          "$RUNNER_TEMP/ansible/bin/pip" install --quiet 'ansible==14.5.0' 'ansible-lint==26.10.1'
+          echo "$RUNNER_TEMP/ansible/bin" >> "$GITHUB_PATH"
+
+      - name: ansible-lint
+        run: ansible-lint site.yml
+
+      - name: Syntax check
+        run: ansible-playbook -i inventory.example.yml site.yml --syntax-check
+
+      - name: Check mode against the runner (installs nothing)
+        run: ansible-playbook -i localhost, -c local site.yml --check -e infranest_agent_token=sat_example
+
+      - name: cloud-init file is valid cloud-config
+        run: |
+          head -n 1 cloud-init.yaml | grep -qx '#cloud-config'
+          python3 -c 'import sys, yaml; d = yaml.safe_load(open("cloud-init.yaml")); assert {"write_files", "runcmd"} <= d.keys(), d.keys()'

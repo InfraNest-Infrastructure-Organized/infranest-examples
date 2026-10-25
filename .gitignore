@@ -2,3 +2,6 @@
 audit-*.jsonl
 .env
 *.local
+# The agent example's real inventory and per-host tokens.
+examples/agent-install/inventory.yml
+examples/agent-install/host_vars/
