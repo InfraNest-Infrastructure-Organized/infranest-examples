@@ -123,7 +123,7 @@ sample_zone() {
   zone_json=$(api GET "$ORG/dns-zones?per_page=100" | jq -c "$ROWS"'[rows[] | select(.name | startswith("sandbox-"))][0] // rows[0]')
   ZONE_ID=$(echo "$zone_json" | jq -r .id)
   ZONE_NAME=$(echo "$zone_json" | jq -r .name)
-  [ -n "$ZONE_ID" ] && [ "$ZONE_ID" != "null" ] || fail "The sandbox has no DNS zone; reset it."
+  case "$ZONE_ID" in '' | null) fail "The sandbox has no DNS zone; reset it." ;; esac
   export ZONE_ID
 }
 
