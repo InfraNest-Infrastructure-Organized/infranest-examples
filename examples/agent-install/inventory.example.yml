@@ -1,0 +1,17 @@
+---
+# Copy to inventory.yml. Each server needs its own token, from its page in InfraNest (Metrics → Install agent).
+# Keep the tokens out of this file: put each in host_vars/<host>.yml and encrypt it with
+#   ansible-vault encrypt_string 'sat_…' --name infranest_agent_token
+all:
+  children:
+    linux:
+      hosts:
+        web-01.example.com:
+        web-02.example.com:
+    windows:
+      hosts:
+        win-01.example.com:
+      vars:
+        ansible_connection: winrm
+        ansible_winrm_transport: ntlm
+        ansible_port: 5986

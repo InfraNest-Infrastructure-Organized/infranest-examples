@@ -40,9 +40,9 @@ in_minutes() {
 case "${1:-}" in
   open)
     : "${CHECK_IDS:?Set CHECK_IDS}"
-    body=$(jq -n --arg name "${NAME:-Deploy}" --arg start "$(in_minutes 0)" --arg end "$(in_minutes "${MINUTES:-30}")" \
+    body=$(jq -n --arg name "${NAME:-Deploy}" --arg starts "$(in_minutes 0)" --arg ends "$(in_minutes "${MINUTES:-30}")" \
       --arg ids "$CHECK_IDS" \
-      '{name: $name, starts_at: $start, ends_at: $end, suppress_alerts: true, check_ids: ($ids | split(",") | map(tonumber))}')
+      '{name: $name, starts_at: $starts, ends_at: $ends, suppress_alerts: true, check_ids: ($ids | split(",") | map(tonumber))}')
     infranest POST "$ORG/maintenance-windows" "$body" "deploy-${DEPLOY_ID:-$(date -u +%s)}" | jq -r .id
     ;;
   close)

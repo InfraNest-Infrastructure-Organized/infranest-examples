@@ -5,6 +5,7 @@
 //   INFRANEST_ORG    your organization's id
 //   ZONE_ID, RECORD_ID  the zone and the record to keep up to date
 //   FAMILY           4 (default) or 6
+//   ADDRESS          optional: use this address instead of looking it up (from your router, or for a test)
 //   DRY_RUN          1 to only show what would change
 const API = process.env.INFRANEST_API ?? 'https://api.infranest.io/api'
 const TOKEN = process.env.INFRANEST_TOKEN
@@ -31,7 +32,7 @@ function env (name) {
 
 const [org, zone, record] = [env('INFRANEST_ORG'), env('ZONE_ID'), env('RECORD_ID')]
 const lookup = process.env.FAMILY === '6' ? 'https://api64.ipify.org' : 'https://api.ipify.org'
-const current = (await (await fetch(lookup)).text()).trim()
+const current = process.env.ADDRESS || (await (await fetch(lookup)).text()).trim()
 
 const { value: stored } = await infranest('GET', `/organizations/${org}/dns-zones/${zone}/dns-records/${record}`)
 if (current === stored) process.exit(0)

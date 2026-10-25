@@ -18,12 +18,17 @@ common job are all welcome.
 - **Safe to run twice.** Look before you create, and send an `Idempotency-Key` on every create.
 - **Least privilege.** Say which token scopes it needs, and need as few as possible.
 - **Sample values only:** `example.com`, `192.0.2.x`, `2001:db8::`. Never a real token, address or domain.
+- **Tested against the sandbox.** A new example gets a README that links its page in the
+  [developer docs](https://developers.infranest.io), a function in `scripts/sandbox-run.sh` that runs every language
+  version against the sandbox and checks the result, removing what it created, and a step in `.github/workflows/ci.yml`.
 
 ## Before you open a pull request
 
 ```sh
-shellcheck -s sh examples/*/*.sh
+shellcheck -s sh examples/*/*.sh scripts/*.sh
 python3 scripts/check-requests.py   # downloads the API description; or pass a local openapi.json
+INFRANEST_TOKEN='123|in_test_…' scripts/sandbox-run.sh   # every example against your own sandbox
 ```
 
-Both run in CI as well. Try the script in your InfraNest sandbox, and say in the pull request that you did.
+All three run in CI as well; the sandbox run needs the repository's test token, so on a pull request from a fork it is
+skipped. Run it against your own sandbox, and say in the pull request that you did.
