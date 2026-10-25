@@ -1,7 +1,7 @@
 #!/bin/sh
-# Every verifier in this folder against the same deliveries, signed here the way InfraNest signs them: with a
-# timestamp (test deliveries), without one (events sent by an automation today), a tampered body, a stale timestamp
-# and a wrong secret. Each must accept the first two and refuse the rest. CI runs this; so can you.
+# Every verifier in this folder against the same deliveries, signed here the way InfraNest signs them
+# (X-InfraNest-Signature-V2 over "<timestamp>.<body>"): a genuine one, then a missing timestamp, a tampered body, a
+# stale timestamp and a wrong secret. Each must accept the first and refuse the rest. CI runs this; so can you.
 #
 # Needs openssl, node, python3, php, go and pwsh; a missing one is skipped with a note.
 set -eu
@@ -47,7 +47,7 @@ for lang in sh node python3 php go pwsh; do
   # shellcheck disable=SC2086 # $cmd is a command and its arguments, split on purpose
   {
     check "accepts a timestamped delivery" 0 $cmd "$WORK/body.json" "$now" "$with_ts"
-    check "accepts a body-only signature" 0 $cmd "$WORK/body.json" "" "$body_only"
+    check "refuses the deprecated body-only form" 1 $cmd "$WORK/body.json" "" "$body_only"
     check "refuses a tampered body" 1 $cmd "$WORK/tampered.json" "$now" "$with_ts"
     check "refuses a stale timestamp" 1 $cmd "$WORK/body.json" "$stale" "$stale_ts"
     check "refuses another secret" 1 $cmd "$WORK/body.json" "$now" "$wrong_secret"

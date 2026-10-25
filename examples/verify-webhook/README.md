@@ -18,12 +18,13 @@ page — plus a few lines that let you try it from the command line.
 
 ## How InfraNest signs a delivery
 
-`X-InfraNest-Signature` is `sha256=` and the hex HMAC-SHA256, with the signing secret, of:
+`X-InfraNest-Signature-V2` is `sha256=` and the hex HMAC-SHA256, with the signing secret, of
+`"<X-InfraNest-Timestamp>.<raw body>"`. Every request carries it: a test delivery, a subscribed event and an
+event sent by an automation. Refuse a timestamp more than 300 seconds from your clock, so a captured request
+cannot be replayed.
 
-- `"<X-InfraNest-Timestamp>.<raw body>"` when the request carries `X-InfraNest-Timestamp` (a test delivery). Refuse
-  a timestamp more than 300 seconds from your clock, so a captured request cannot be replayed;
-- the raw body alone when it does not (an event sent by an automation, today — this will become the timestamped
-  form, announced in the [changelog](https://developers.infranest.io/changelog) first).
+The older `X-InfraNest-Signature` header is deprecated and sent until 30 April 2027. These verifiers ignore it.
+See the [changelog](https://developers.infranest.io/changelog).
 
 Use the body exactly as it arrived, before parsing it: re-encoding JSON changes the bytes. Compare in constant time.
 
@@ -34,8 +35,9 @@ node verify.mjs body.json "$TIMESTAMP" "$SIGNATURE" && echo genuine
 
 ## Tested
 
-`test.sh` signs deliveries the way InfraNest does and runs every version against them: both forms accepted; a
-tampered body, a stale timestamp and another secret refused. CI runs it on every pull request.
+`test.sh` signs deliveries the way InfraNest does and runs every version against them: a timestamped
+delivery accepted; the deprecated body-only form, a tampered body, a stale timestamp and another secret
+refused. CI runs it on every pull request.
 
 ```sh
 sh test.sh

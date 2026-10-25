@@ -1,6 +1,6 @@
 // Verify that a webhook delivery came from InfraNest. https://developers.infranest.io/webhooks#verify-the-signature
 //
-//	go run verify.go BODY_FILE TIMESTAMP SIGNATURE     (TIMESTAMP "" when the header was absent)
+//	go run verify.go BODY_FILE TIMESTAMP SIGNATURE     (X-InfraNest-Timestamp, X-InfraNest-Signature-V2)
 //	INFRANEST_WEBHOOK_SECRET   the endpoint's signing secret (whsec_…)
 //
 // Exits 0 for a genuine delivery, 1 otherwise. Use VerifyInfraNest in your own receiver.
@@ -15,19 +15,18 @@ import (
 	"time"
 )
 
-// VerifyInfraNest checks a delivery. timestamp is "" when the header is absent; rawBody is the body as received.
+// VerifyInfraNest checks a delivery: timestamp and signature are the X-InfraNest-Timestamp and
+// X-InfraNest-Signature-V2 headers, rawBody the body as received.
 func VerifyInfraNest(rawBody []byte, timestamp, signature, secret string) bool {
-	mac := hmac.New(sha256.New, []byte(secret))
-	if timestamp != "" {
-		ts, err := strconv.ParseInt(timestamp, 10, 64)
-		if err != nil {
-			return false
-		}
-		if age := time.Now().Unix() - ts; age > 300 || age < -300 {
-			return false
-		}
-		mac.Write([]byte(timestamp + "."))
+	ts, err := strconv.ParseInt(timestamp, 10, 64)
+	if err != nil {
+		return false
 	}
+	if age := time.Now().Unix() - ts; age > 300 || age < -300 {
+		return false
+	}
+	mac := hmac.New(sha256.New, []byte(secret))
+	mac.Write([]byte(timestamp + "."))
 	mac.Write(rawBody)
 	expected := "sha256=" + hex.EncodeToString(mac.Sum(nil))
 	return hmac.Equal([]byte(expected), []byte(signature))
