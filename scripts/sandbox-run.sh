@@ -247,6 +247,11 @@ example_watch_new_server() {
   [ -z "$monitor" ] || remember "$ORG/monitoring-checks/$monitor"
 }
 
+example_quickstart() {
+  # The developer site's quickstart, as written: it checks each step's answer itself and undoes its own change.
+  sh examples/quickstart/quickstart.sh
+}
+
 example_audit_log_to_siem() {
   # Today's log: this run's own changes, and the reset, are in it.
   day=$(date -u +%Y-%m-%d)
@@ -270,7 +275,7 @@ example_status_and_uptime() {
   sh examples/status-and-uptime/uptime.sh
 }
 
-ALL="sandbox-smoke-test dynamic-dns acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem"
+ALL="sandbox-smoke-test quickstart dynamic-dns acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem"
 
 find_sandbox
 # shellcheck disable=SC2086 # $ALL is a list of names, split on purpose

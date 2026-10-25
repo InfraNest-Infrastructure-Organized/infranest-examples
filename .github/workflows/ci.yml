@@ -73,6 +73,9 @@ jobs:
       - name: sandbox-smoke-test
         if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
         run: scripts/sandbox-run.sh sandbox-smoke-test
+      - name: quickstart
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh quickstart
       - name: dynamic-dns
         if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
         run: scripts/sandbox-run.sh dynamic-dns
@@ -98,6 +101,17 @@ jobs:
       - name: Reset the sandbox
         if: ${{ always() && steps.token.outputs.present == 'true' }}
         run: scripts/sandbox-run.sh reset
+
+  # The webhook verifiers, in every language, against deliveries signed the way InfraNest signs them: both signature
+  # forms accepted; a tampered body, a stale timestamp and another secret refused. Needs no token.
+  verify-webhook:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Every verifier agrees
+        run: sh examples/verify-webhook/test.sh
 
   # The agent example installs software on servers, so CI never runs it for real: it lints the role, checks the
   # playbook's syntax and runs it in check mode against the runner itself, which installs nothing.
