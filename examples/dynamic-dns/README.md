@@ -3,6 +3,10 @@
 Keep one A (or AAAA) record pointing at a machine whose public address changes, for example a Raspberry Pi at home.
 The record is only changed when the address really changed, and `DRY_RUN=1` shows what would change first.
 
+> **Consider [`dynamic-ip`](../dynamic-ip/) first.** It reports the address to an InfraNest Dynamic IP source, which
+> keeps every record it holds, with a history, a change alert and an event, and it works from a router or `ddclient`
+> with no API token. This example is for one record you want to rewrite yourself.
+
 Docs: [Update DNS from a script when your IP changes](https://developers.infranest.io/recipes/dynamic-dns-from-a-script)
 
 | File | Language |

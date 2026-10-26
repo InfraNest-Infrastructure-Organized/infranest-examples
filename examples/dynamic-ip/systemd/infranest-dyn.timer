@@ -1,0 +1,10 @@
+# /etc/systemd/system/infranest-dyn.timer — enable with: systemctl enable --now infranest-dyn.timer
+[Unit]
+Description=Report this connection's address to InfraNest every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
