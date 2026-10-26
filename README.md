@@ -120,6 +120,8 @@ Every pull request, every change to `main` and a weekly job check these scripts 
 - [Service status](https://status.infranest.io)
 - [infranest-agent](https://github.com/InfraNest-Infrastructure-Organized/infranest-agent), the open-source
   monitoring agent for your servers
+- [infranest-mcp](https://github.com/InfraNest-Infrastructure-Organized/infranest-mcp), the MCP server: ask your AI assistant what is down, where a hostname points, or what
+  expires soon
 
 ## Found a problem?
 
