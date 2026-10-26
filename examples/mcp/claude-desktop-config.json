@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "infranest": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.infranest.io/mcp", "--header", "Authorization: Bearer ${INFRANEST_TOKEN}"],
+      "env": { "INFRANEST_TOKEN": "your token" }
+    }
+  }
+}
