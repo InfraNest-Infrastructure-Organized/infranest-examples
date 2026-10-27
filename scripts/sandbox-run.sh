@@ -275,7 +275,14 @@ example_status_and_uptime() {
   sh examples/status-and-uptime/uptime.sh
 }
 
-ALL="sandbox-smoke-test quickstart dynamic-dns acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem"
+example_mcp() {
+  echo "· check-connection.sh"
+  INFRANEST_MCP="${API%/api}/mcp" sh examples/mcp/check-connection.sh | tee "$WORK/mcp.txt"
+  grep -q '^Connected to ' "$WORK/mcp.txt" || fail "check-connection.sh did not connect"
+  grep -q "^  $INFRANEST_ORG " "$WORK/mcp.txt" || fail "check-connection.sh did not list the sandbox"
+}
+
+ALL="sandbox-smoke-test quickstart dynamic-dns acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem mcp"
 
 find_sandbox
 # shellcheck disable=SC2086 # $ALL is a list of names, split on purpose
