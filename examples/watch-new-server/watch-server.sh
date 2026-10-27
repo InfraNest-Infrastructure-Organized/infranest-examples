@@ -26,7 +26,13 @@ infranest() {
 : "${INFRANEST_ORG:?Set INFRANEST_ORG}" "${SERVER_NAME:?Set SERVER_NAME}"
 ORG="/organizations/$INFRANEST_ORG"
 
-server=$(infranest GET "$ORG/cloud-servers?search=$SERVER_NAME" | jq -r --arg n "$SERVER_NAME" '[.data[] | select(.name == $n)][0].id // empty')
+# The server list holds the servers your cloud providers report. A self-managed one (added by hand, or by the
+# agent with an enrollment key) is listed only when asked for by provider, so look there second.
+find_server() {
+  infranest GET "$ORG/cloud-servers?search=$SERVER_NAME$1" | jq -r --arg n "$SERVER_NAME" '[.data[] | select(.name == $n)][0].id // empty'
+}
+server=$(find_server "")
+[ -n "$server" ] || server=$(find_server "&provider=self_managed")
 if [ -z "$server" ]; then
   echo "No server called $SERVER_NAME yet. InfraNest syncs with your provider on a schedule; select Sync now in the app to fetch it at once." >&2
   exit 1
