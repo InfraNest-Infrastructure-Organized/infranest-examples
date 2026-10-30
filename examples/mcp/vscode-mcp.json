@@ -1,0 +1,12 @@
+{
+  "inputs": [
+    { "type": "promptString", "id": "infranest-token", "description": "InfraNest API token", "password": true }
+  ],
+  "servers": {
+    "infranest": {
+      "type": "http",
+      "url": "https://api.infranest.io/mcp",
+      "headers": { "Authorization": "Bearer ${input:infranest-token}" }
+    }
+  }
+}

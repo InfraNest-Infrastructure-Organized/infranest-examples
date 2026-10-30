@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "infranest": {
+      "url": "https://api.infranest.io/mcp",
+      "headers": { "Authorization": "Bearer ${env:INFRANEST_TOKEN}" }
+    }
+  }
+}

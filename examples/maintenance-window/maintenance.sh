@@ -47,7 +47,8 @@ case "${1:-}" in
     ;;
   close)
     : "${WINDOW_ID:?Set WINDOW_ID}"
-    infranest PATCH "$ORG/maintenance-windows/$WINDOW_ID/complete" > /dev/null
+    # On a refusal, say why: the answer's message is the useful part, and discarding it leaves only "error: 422".
+    answer=$(infranest PATCH "$ORG/maintenance-windows/$WINDOW_ID/complete") || { echo "$answer" >&2; exit 1; }
     echo "Maintenance window $WINDOW_ID closed; alerts are back on."
     ;;
   *)

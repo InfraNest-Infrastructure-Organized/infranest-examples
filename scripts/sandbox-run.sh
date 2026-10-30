@@ -269,7 +269,8 @@ example_watch_new_server() {
   # The sandbox's sample server. The website URL stays the same between runs: the example's idempotency key is
   # tied to the server, so a different body within 24 hours would be refused as a reused key.
   website=https://web-01.example.com
-  server=$(api GET "$ORG/cloud-servers?search=web-01" | jq -r '[.data[] | select(.name == "web-01")][0].id // empty')
+  # web-01 is self-managed, which the server list includes only when asked for by provider.
+  server=$(api GET "$ORG/cloud-servers?search=web-01&provider=self_managed" | jq -r '[.data[] | select(.name == "web-01")][0].id // empty')
   [ -n "$server" ] || fail "The sandbox has no server web-01; reset it."
   SERVER_NAME=web-01 WEBSITE_URL=$website sh examples/watch-new-server/watch-server.sh
   remember "$ORG/cloud-servers/$server/monitoring"
@@ -308,7 +309,14 @@ example_status_and_uptime() {
   sh examples/status-and-uptime/uptime.sh
 }
 
-ALL="sandbox-smoke-test quickstart dynamic-dns dynamic-ip acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem"
+example_mcp() {
+  echo "· check-connection.sh"
+  INFRANEST_MCP="${API%/api}/mcp" sh examples/mcp/check-connection.sh | tee "$WORK/mcp.txt"
+  grep -q '^Connected to ' "$WORK/mcp.txt" || fail "check-connection.sh did not connect"
+  grep -q "^  $INFRANEST_ORG " "$WORK/mcp.txt" || fail "check-connection.sh did not list the sandbox"
+}
+
+ALL="sandbox-smoke-test quickstart dynamic-dns dynamic-ip acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem mcp"
 
 find_sandbox
 # shellcheck disable=SC2086 # $ALL is a list of names, split on purpose
