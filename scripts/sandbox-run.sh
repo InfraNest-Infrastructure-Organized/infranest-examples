@@ -236,7 +236,8 @@ example_watch_new_server() {
   # The sandbox's sample server. The website URL stays the same between runs: the example's idempotency key is
   # tied to the server, so a different body within 24 hours would be refused as a reused key.
   website=https://web-01.example.com
-  server=$(api GET "$ORG/cloud-servers?search=web-01" | jq -r '[.data[] | select(.name == "web-01")][0].id // empty')
+  # web-01 is self-managed, which the server list includes only when asked for by provider.
+  server=$(api GET "$ORG/cloud-servers?search=web-01&provider=self_managed" | jq -r '[.data[] | select(.name == "web-01")][0].id // empty')
   [ -n "$server" ] || fail "The sandbox has no server web-01; reset it."
   SERVER_NAME=web-01 WEBSITE_URL=$website sh examples/watch-new-server/watch-server.sh
   remember "$ORG/cloud-servers/$server/monitoring"
