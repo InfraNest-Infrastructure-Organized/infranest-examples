@@ -1,0 +1,12 @@
+# /etc/systemd/system/infranest-dyn.service — runs dyn-update.sh once; the timer next to it repeats it.
+# /etc/infranest-dyn.env (chmod 600) holds DYN_USER=… and DYN_PASSWORD=…
+[Unit]
+Description=Report this connection's address to InfraNest Dynamic IP
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/infranest-dyn.env
+ExecStart=/usr/local/bin/dyn-update.sh
+DynamicUser=yes

@@ -79,6 +79,9 @@ jobs:
       - name: dynamic-dns
         if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
         run: scripts/sandbox-run.sh dynamic-dns
+      - name: dynamic-ip
+        if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
+        run: scripts/sandbox-run.sh dynamic-ip
       - name: acme-dns-01
         if: ${{ !cancelled() && steps.token.outputs.present == 'true' }}
         run: scripts/sandbox-run.sh acme-dns-01

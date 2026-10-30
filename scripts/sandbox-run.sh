@@ -180,6 +180,39 @@ example_dynamic_dns() {
   done
 }
 
+example_dynamic_ip() {
+  sample_zone
+  # The sandbox's sample source, Office, keeps the A record `office` (a token cannot create a source).
+  DYNAMIC_IP_ID=$(api GET "$ORG/dynamic-ips" | jq -r "$ROWS"'[rows[] | select(.label == "Office")][0].id // empty')
+  [ -n "$DYNAMIC_IP_ID" ] || fail "The sandbox has no Office dynamic IP; reset it."
+  export DYNAMIC_IP_ID
+  office=$(api GET "$ORG/dns-zones/$ZONE_ID/dns-records?type=A&per_page=100" | jq -r "$ROWS"'[rows[] | select(.name == "office")][0].id // empty')
+  [ -n "$office" ] || fail "The sandbox has no office record; reset it."
+  sample='{"ipv4": "198.51.100.7"}'
+  api PUT "$ORG/dynamic-ips/$DYNAMIC_IP_ID/address" "$sample" > /dev/null
+
+  echo "· set-address.sh"
+  changed=$(export ADDRESS=203.0.113.20; sh examples/dynamic-ip/set-address.sh)
+  expect "$changed" "Changed to 203.0.113.20; 1 record(s) updated" "set-address.sh: the address was not set"
+  # The records follow on the queue; give them a moment.
+  for _ in 1 2 3 4 5 6 7 8 9 10; do
+    [ "$(record_value "$office")" = 203.0.113.20 ] && break
+    sleep 2
+  done
+  expect "$(record_value "$office")" 203.0.113.20 "set-address.sh: the office record did not follow"
+  unchanged=$(export ADDRESS=203.0.113.20; sh examples/dynamic-ip/set-address.sh) || fail "set-address.sh: the second run failed: $unchanged"
+  expect "$unchanged" "" "set-address.sh: a second run with the same address should print nothing"
+
+  # The update endpoint needs the source's password, which only the app shows; a wrong one must fail loudly.
+  echo "· dyn-update.sh"
+  if refused=$(export DYN_USER=dyn_nobody DYN_PASSWORD="wrong-$RUN" DYN_URL="$API/dyn"; sh examples/dynamic-ip/dyn-update.sh); then
+    fail "dyn-update.sh: a wrong password should exit non-zero"
+  fi
+  expect "$refused" badauth "dyn-update.sh: a wrong password"
+
+  api PUT "$ORG/dynamic-ips/$DYNAMIC_IP_ID/address" "$sample" > /dev/null
+}
+
 example_acme_dns_01() {
   sample_zone
   export TMPDIR="$WORK" PROPAGATION_SECONDS=0
@@ -283,7 +316,7 @@ example_mcp() {
   grep -q "^  $INFRANEST_ORG " "$WORK/mcp.txt" || fail "check-connection.sh did not list the sandbox"
 }
 
-ALL="sandbox-smoke-test quickstart dynamic-dns acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem mcp"
+ALL="sandbox-smoke-test quickstart dynamic-dns dynamic-ip acme-dns-01 maintenance-window monitor-per-deploy watch-new-server status-and-uptime audit-log-to-siem mcp"
 
 find_sandbox
 # shellcheck disable=SC2086 # $ALL is a list of names, split on purpose
