@@ -1,6 +1,11 @@
 ---
-# The server token for this host, from the server's page in InfraNest (Metrics → Install agent).
-# Each server has its own token: set it per host, in host_vars, and keep it in Ansible Vault.
+# An enrollment key, from Settings → Server agent → New key in InfraNest. It starts with sek_. One key installs
+# every host: the installer trades it for that server's own token, and the agent never sees the key. Keep it in
+# Ansible Vault (group_vars/all.yml) or pass it with -e from an environment variable.
+infranest_agent_enrollment_key: ""
+
+# Or a server token per host instead, from the server's page in InfraNest (Metrics → Install agent). It starts
+# with sat_. Set it in host_vars, in Ansible Vault. Used only when no enrollment key is set.
 infranest_agent_token: ""
 
 # Also report the busiest processes by name (program names only, never their arguments). Off unless you ask.

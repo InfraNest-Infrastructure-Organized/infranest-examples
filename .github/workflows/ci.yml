@@ -148,4 +148,6 @@ jobs:
       - name: cloud-init file is valid cloud-config
         run: |
           head -n 1 cloud-init.yaml | grep -qx '#cloud-config'
-          python3 -c 'import sys, yaml; d = yaml.safe_load(open("cloud-init.yaml")); assert {"write_files", "runcmd"} <= d.keys(), d.keys()'
+          # It installs with an enrollment key: a runcmd that runs the installer with --enroll, and no
+          # token left in write_files (InfraNest#4905).
+          python3 -c 'import yaml; d = yaml.safe_load(open("cloud-init.yaml")); assert "runcmd" in d, d.keys(); assert any("--enroll" in c for c in d["runcmd"]), d["runcmd"]; assert "write_files" not in d, "a token in write_files"'
