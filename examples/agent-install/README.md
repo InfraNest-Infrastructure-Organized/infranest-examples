@@ -15,37 +15,44 @@ Docs: [Install the agent on many servers](https://developers.infranest.io/agent/
 | [`inventory.example.yml`](inventory.example.yml) | An example inventory, Linux and Windows hosts |
 | [`cloud-init.yaml`](cloud-init.yaml) | User data that installs the agent on a new Linux server's first boot |
 
-## One token per server
+## One key for every server
 
-Each server has its own token, from its page in InfraNest: **Metrics → Install agent**. It starts with `sat_`.
-Revoking one server's token never touches the others.
+Create an **enrollment key** under **Settings → Server agent → New key** in InfraNest. It starts with `sek_` and
+is shown once. Give it an expiry or a maximum number of servers if you want to bound it. The installer trades the
+key for **that server's own token** before it installs anything, so the agent never sees the key: revoking the key
+stops new installs, and every server that already enrolled keeps reporting. Running it again on the same machine
+gets the same server back instead of adding one.
 
-An **enrollment key**, coming under **Settings → Server agent**, will let one key install the agent on as many servers
-as you allow. Until then, give each host its own token.
+You can still give each server its own token instead, from its page in InfraNest (**Metrics → Install agent**). It
+starts with `sat_`.
 
 ## Ansible
 
-Put each server's token in its `host_vars` file, encrypted:
+Put the key in `group_vars/all.yml`, encrypted:
 
 ```sh
 cp inventory.example.yml inventory.yml     # list your servers
-mkdir -p host_vars
-ansible-vault encrypt_string 'sat_…' --name infranest_agent_token > host_vars/web-01.example.com.yml
+mkdir -p group_vars
+ansible-vault encrypt_string 'sek_…' --name infranest_enrollment_key > group_vars/all.yml
 ansible-playbook -i inventory.yml site.yml --ask-vault-pass --check   # see what it would do
 ansible-playbook -i inventory.yml site.yml --ask-vault-pass
 ```
 
-The token is written to a file only root (or the administrators, on Windows) can read and passed with
-`--token-file` / `-TokenFile`, so it never shows in a process list or a shell history. The file and the installer
-are removed afterwards. Set `infranest_agent_processes: true` to also report the busiest processes by name (program
-names only, never their arguments).
+The key is passed with `--enroll` / `-Enroll`, and the task's log is suppressed so it never appears in Ansible's
+output. To use a token per server instead, leave `infranest_enrollment_key` empty and put each server's token in
+its `host_vars` file (`ansible-vault encrypt_string 'sat_…' --name infranest_agent_token`); the token is then
+written to a file only root (or the administrators, on Windows) can read and passed with `--token-file` /
+`-TokenFile`. The installer, and any token file, are removed afterwards. Set `infranest_agent_processes: true` to
+also report the busiest processes by name (program names only, never their arguments).
 
 Windows hosts need the `ansible.windows` collection, which comes with the `ansible` package.
 
 ## cloud-init
 
 Paste [`cloud-init.yaml`](cloud-init.yaml) into your cloud provider's *user data* field, or pass it to the API or
-Terraform that creates the server, with `sat_YOUR_TOKEN` replaced by that server's token.
+Terraform that creates the server, with `sek_YOUR_KEY` replaced by your enrollment key. The same file works for
+every server. Anyone who can read the instance's configuration at your cloud provider can read the key too, so give
+it an expiry or a server limit if that is wider than you want.
 
 ## Check it worked
 
