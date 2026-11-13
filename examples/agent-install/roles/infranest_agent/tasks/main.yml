@@ -3,16 +3,16 @@
 # A host that already has the agent is left alone, so the role is safe to run again. To upgrade agents,
 # run the installer with --upgrade (Linux) or -Upgrade (Windows); it needs no token.
 #
-# With infranest_enrollment_key set, every host enrolls with that one key (--enroll / -Enroll) and gets its
+# With infranest_agent_enrollment_key set, every host enrolls with that one key (--enroll / -Enroll) and gets its
 # own server token back; running the role again on the same machine finds the same server. Without it, each
 # host needs its own infranest_agent_token.
 
 - name: Check that this host has an enrollment key or its server token
   ansible.builtin.assert:
     that:
-      - infranest_enrollment_key is match('^sek_') or infranest_agent_token is match('^sat_')
+      - infranest_agent_enrollment_key is match('^sek_') or infranest_agent_token is match('^sat_')
     fail_msg: >-
-      Set infranest_enrollment_key (one key for every host, from Settings → Server agent in InfraNest; it starts
+      Set infranest_agent_enrollment_key (one key for every host, from Settings → Server agent in InfraNest; it starts
       with sek_), or infranest_agent_token for {{ inventory_hostname }} (the server token from its page, Metrics →
       Install agent; it starts with sat_).
     quiet: true
@@ -38,7 +38,7 @@
         # A server token goes in a file only root can read, so it never appears in a process list or a shell
         # history. An enrollment key has no file form; it is passed once, and the task's log is suppressed.
         - name: Write the server token for the installer
-          when: not infranest_enrollment_key
+          when: not infranest_agent_enrollment_key
           ansible.builtin.copy:
             content: "{{ infranest_agent_token }}"
             dest: /root/infranest-agent-token
@@ -48,11 +48,11 @@
         - name: Run the installer
           ansible.builtin.command:
             argv: "{{ ['sh', '/root/infranest-agent-install.sh']
-              + (['--enroll', infranest_enrollment_key] if infranest_enrollment_key
+              + (['--enroll', infranest_agent_enrollment_key] if infranest_agent_enrollment_key
                  else ['--token-file', '/root/infranest-agent-token'])
               + (['--processes'] if infranest_agent_processes | bool else []) }}"
             creates: /usr/local/bin/infranest-agent
-          no_log: "{{ infranest_enrollment_key | length > 0 }}"
+          no_log: "{{ infranest_agent_enrollment_key | length > 0 }}"
 
       always:
         - name: Remove the token file and the installer
@@ -80,7 +80,7 @@
             dest: C:\Windows\Temp\infranest-agent-install.ps1
 
         - name: Write the server token for the installer
-          when: not infranest_enrollment_key
+          when: not infranest_agent_enrollment_key
           ansible.windows.win_copy:
             content: "{{ infranest_agent_token }}"
             dest: C:\Windows\Temp\infranest-agent-token
@@ -97,8 +97,8 @@
               & $installer @options
             parameters:
               Processes: "{{ infranest_agent_processes | bool }}"
-              Enroll: "{{ infranest_enrollment_key }}"
-          no_log: "{{ infranest_enrollment_key | length > 0 }}"
+              Enroll: "{{ infranest_agent_enrollment_key }}"
+          no_log: "{{ infranest_agent_enrollment_key | length > 0 }}"
 
       always:
         - name: Remove the token file and the installer

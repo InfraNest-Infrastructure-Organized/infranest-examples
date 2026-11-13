@@ -1,7 +1,7 @@
 ---
 # Copy to inventory.yml. Keep secrets out of this file: put one enrollment key for every host in
 # group_vars/all.yml and encrypt it with
-#   ansible-vault encrypt_string 'sek_…' --name infranest_enrollment_key
+#   ansible-vault encrypt_string 'sek_…' --name infranest_agent_enrollment_key
 # or, to give each server its own token instead, put it in host_vars/<host>.yml as infranest_agent_token.
 all:
   children:

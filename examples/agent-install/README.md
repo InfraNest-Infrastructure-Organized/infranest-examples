@@ -33,13 +33,13 @@ Put the key in `group_vars/all.yml`, encrypted:
 ```sh
 cp inventory.example.yml inventory.yml     # list your servers
 mkdir -p group_vars
-ansible-vault encrypt_string 'sek_…' --name infranest_enrollment_key > group_vars/all.yml
+ansible-vault encrypt_string 'sek_…' --name infranest_agent_enrollment_key > group_vars/all.yml
 ansible-playbook -i inventory.yml site.yml --ask-vault-pass --check   # see what it would do
 ansible-playbook -i inventory.yml site.yml --ask-vault-pass
 ```
 
 The key is passed with `--enroll` / `-Enroll`, and the task's log is suppressed so it never appears in Ansible's
-output. To use a token per server instead, leave `infranest_enrollment_key` empty and put each server's token in
+output. To use a token per server instead, leave `infranest_agent_enrollment_key` empty and put each server's token in
 its `host_vars` file (`ansible-vault encrypt_string 'sat_…' --name infranest_agent_token`); the token is then
 written to a file only root (or the administrators, on Windows) can read and passed with `--token-file` /
 `-TokenFile`. The installer, and any token file, are removed afterwards. Set `infranest_agent_processes: true` to
