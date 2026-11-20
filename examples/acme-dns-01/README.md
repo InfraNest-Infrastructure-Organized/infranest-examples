@@ -3,7 +3,7 @@
 Certbot hooks that prove you own a domain with a TXT record in InfraNest DNS, so you get certificates, wildcards
 included, without opening a port.
 
-Docs: [Let's Encrypt with InfraNest DNS](https://developers.infranest.io/recipes/acme-dns-01)
+Docs: [Let's Encrypt with InfraNest DNS](https://developers.infranest.io/recipes/acme-dns-01?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | What it is |
 |---|---|

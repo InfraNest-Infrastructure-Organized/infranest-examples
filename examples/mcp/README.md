@@ -4,7 +4,7 @@ Connect Claude, ChatGPT, Cursor, VS Code or Claude Desktop to InfraNest, then as
 it broke and what changed just before, where a name points, what expires soon. The assistant reads through the
 InfraNest MCP server, with the same rules as your API token.
 
-Docs: [The MCP server](https://developers.infranest.io/ai-assistants)
+Docs: [The MCP server](https://developers.infranest.io/ai-assistants?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 **claude.ai and ChatGPT** need no file here: add InfraNest as a connector, sign in, and pick the organization —
 see [Connect Claude or ChatGPT](https://infranest.io/docs/connect-claude-or-chatgpt/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples).
@@ -45,4 +45,4 @@ checks that it connects and lists the sandbox.
 
 Claude and ChatGPT also offer four ready-made investigations in their prompt menu — *Investigate an incident*,
 *What changed recently*, *Health check* and *Monthly uptime report* — and draw the status, uptime and server metrics
-as charts. See [the MCP server](https://developers.infranest.io/ai-assistants) for every tool.
+as charts. See [the MCP server](https://developers.infranest.io/ai-assistants?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples) for every tool.

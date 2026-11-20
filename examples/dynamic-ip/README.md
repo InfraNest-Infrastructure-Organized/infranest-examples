@@ -9,7 +9,7 @@ also keep a firewall rule open to that address only.
 Create the source in InfraNest under **Automations → Dynamic IPs**, attach the records it should keep, and copy its
 public id and update password.
 
-Docs: [Keep a name on a changing address with Dynamic IP](https://developers.infranest.io/recipes/dynamic-ip)
+Docs: [Keep a name on a changing address with Dynamic IP](https://developers.infranest.io/recipes/dynamic-ip?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Use it when | Credential |
 |---|---|---|

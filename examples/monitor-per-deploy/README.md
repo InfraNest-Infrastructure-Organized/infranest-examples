@@ -3,7 +3,7 @@
 Make sure a new service is watched from the pipeline that deploys it: the monitor is created once, and running the
 step again finds it instead of creating another. `pause-resume.sh` pauses a monitor around a deploy.
 
-Docs: [Create a monitor when you deploy a new service](https://developers.infranest.io/recipes/monitor-after-a-deploy)
+Docs: [Create a monitor when you deploy a new service](https://developers.infranest.io/recipes/monitor-after-a-deploy?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

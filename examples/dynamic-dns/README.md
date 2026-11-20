@@ -7,7 +7,7 @@ The record is only changed when the address really changed, and `DRY_RUN=1` show
 > keeps every record it holds, with a history, a change alert and an event, and it works from a router or `ddclient`
 > with no API token. This example is for one record you want to rewrite yourself.
 
-Docs: [Update DNS from a script when your IP changes](https://developers.infranest.io/recipes/dynamic-dns-from-a-script)
+Docs: [Update DNS from a script when your IP changes](https://developers.infranest.io/recipes/dynamic-dns-from-a-script?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

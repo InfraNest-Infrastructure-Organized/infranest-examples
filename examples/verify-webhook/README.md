@@ -1,7 +1,7 @@
 # Verify a webhook
 
 Check that a request to your webhook receiver really came from InfraNest, before acting on it. Each file holds the
-same function — the one on the developer site's [Webhooks](https://developers.infranest.io/webhooks#verify-the-signature)
+same function — the one on the developer site's [Webhooks](https://developers.infranest.io/webhooks?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples#verify-the-signature)
 page — plus a few lines that let you try it from the command line.
 
 | File | Language | The function |
@@ -24,7 +24,7 @@ event sent by an automation. Refuse a timestamp more than 300 seconds from your 
 cannot be replayed.
 
 The older `X-InfraNest-Signature` header is deprecated and sent until 30 April 2027. These verifiers ignore it.
-See the [changelog](https://developers.infranest.io/changelog).
+See the [changelog](https://developers.infranest.io/changelog?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples).
 
 Use the body exactly as it arrived, before parsing it: re-encoding JSON changes the bytes. Compare in constant time.
 
