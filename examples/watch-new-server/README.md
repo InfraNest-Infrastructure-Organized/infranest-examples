@@ -3,7 +3,7 @@
 Turn on monitoring for a server you just created at your cloud provider, and add a check on its website, so a new
 machine is watched from its first hour.
 
-Docs: [Start watching a new server](https://developers.infranest.io/recipes/watch-a-new-server)
+Docs: [Start watching a new server](https://developers.infranest.io/recipes/watch-a-new-server?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

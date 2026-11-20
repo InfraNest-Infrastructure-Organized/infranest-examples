@@ -3,7 +3,7 @@
 Write one day of your organization's audit log as JSON lines, the format Filebeat, Vector and the Splunk forwarder
 read. Run it daily, shortly after midnight UTC.
 
-Docs: [Copy the audit log into your SIEM](https://developers.infranest.io/recipes/audit-log-to-a-siem)
+Docs: [Copy the audit log into your SIEM](https://developers.infranest.io/recipes/audit-log-to-a-siem?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

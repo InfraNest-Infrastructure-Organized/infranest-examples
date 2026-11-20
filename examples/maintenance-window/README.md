@@ -2,7 +2,7 @@
 
 Silence alerts while a deploy runs and close the window afterwards, even when the deploy failed.
 
-Docs: [Open a maintenance window from your deploy pipeline](https://developers.infranest.io/recipes/maintenance-window-from-a-pipeline)
+Docs: [Open a maintenance window from your deploy pipeline](https://developers.infranest.io/recipes/maintenance-window-from-a-pipeline?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

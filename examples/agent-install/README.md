@@ -6,7 +6,7 @@ is in [infranest-agent](https://github.com/InfraNest-Infrastructure-Organized/in
 
 This folder installs it the same way as the one-line install in the app, on many servers at once.
 
-Docs: [Install the agent on many servers](https://developers.infranest.io/agent/install-on-many-servers)
+Docs: [Install the agent on many servers](https://developers.infranest.io/agent/install-on-many-servers?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | What it is |
 |---|---|

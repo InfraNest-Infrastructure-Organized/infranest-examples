@@ -3,7 +3,7 @@
 A first run against your sandbox: it resets the sandbox, adds a DNS record, shows what changing it would do, changes it
 and deletes it again. When it passes, your token, your sandbox id and your tools are set up.
 
-Docs: [Sandbox](https://developers.infranest.io/sandbox)
+Docs: [Sandbox](https://developers.infranest.io/sandbox?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | Language |
 |---|---|

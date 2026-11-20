@@ -1,6 +1,6 @@
 # Quickstart
 
-The [developer site's quickstart](https://developers.infranest.io/quickstart) as one script: find your sandbox, read
+The [developer site's quickstart](https://developers.infranest.io/quickstart?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples) as one script: find your sandbox, read
 its sample DNS zones, try an `A` record as a dry run, create it, and undo the change from the zone's history. Each
 step checks the answer the page shows, so a failing step names itself.
 

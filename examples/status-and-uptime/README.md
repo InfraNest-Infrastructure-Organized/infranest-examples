@@ -3,7 +3,7 @@
 Is everything up right now, what was a monitor's uptime last month, and what happened hour by hour: each answered in
 one call, for a dashboard, a chat bot or a weekly report.
 
-Docs: [Status, uptime and history](https://developers.infranest.io/recipes/status-and-uptime)
+Docs: [Status, uptime and history](https://developers.infranest.io/recipes/status-and-uptime?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 
 | File | What it does |
 |---|---|
