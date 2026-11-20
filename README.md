@@ -20,7 +20,7 @@
 
 ---
 
-[InfraNest](https://infranest.io) keeps your domains, DNS, servers and monitoring in one place. Its API lets your
+[InfraNest](https://infranest.io/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples) keeps your domains, DNS, servers and monitoring in one place. Its API lets your
 own scripts, deploy pipelines and AI tools do the same work. This repository has small, complete examples for the
 jobs people automate most often: each one is a single shell script you can read in a minute and run as it is.
 
@@ -96,7 +96,7 @@ windows.
 - **No warranty.** The scripts are provided "as is", without warranty of any kind, under the
   [Apache License 2.0](LICENSE). InfraNest's support covers the InfraNest API and app, not changes you make to these
   scripts.
-- Your use of InfraNest is governed by its [Terms of Service](https://infranest.io/terms).
+- Your use of InfraNest is governed by its [Terms of Service](https://infranest.io/terms/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples).
 
 ## Kept in step with the API
 
@@ -118,7 +118,7 @@ Every pull request, every change to `main` and a weekly job check these scripts 
 - [Developer documentation](https://developers.infranest.io): getting started, tokens and scopes, errors
 - [API reference](https://developers.infranest.io/reference)
 - [Sandbox guide](https://developers.infranest.io/sandbox)
-- [Help center](https://infranest.io/docs) and the article on [API tokens](https://infranest.io/docs/api-tokens)
+- [Help center](https://infranest.io/docs/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples) and the article on [API tokens](https://infranest.io/docs/api-tokens/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples)
 - [Service status](https://status.infranest.io)
 - [infranest-agent](https://github.com/InfraNest-Infrastructure-Organized/infranest-agent), the open-source
   monitoring agent for your servers

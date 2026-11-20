@@ -7,7 +7,7 @@ InfraNest MCP server, with the same rules as your API token.
 Docs: [The MCP server](https://developers.infranest.io/ai-assistants)
 
 **claude.ai and ChatGPT** need no file here: add InfraNest as a connector, sign in, and pick the organization —
-see [Connect Claude or ChatGPT](https://infranest.io/docs/connect-claude-or-chatgpt/).
+see [Connect Claude or ChatGPT](https://infranest.io/docs/connect-claude-or-chatgpt/?utm_source=github&utm_medium=readme&utm_campaign=infranest-examples).
 
 | File | For |
 |---|---|
